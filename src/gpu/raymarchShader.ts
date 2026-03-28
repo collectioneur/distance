@@ -48,7 +48,7 @@ const evalScene = tgpu.fn([d.vec3f], d.vec4f)((p) => {
     // Smooth union with color blending
     if (k > 0.001) {
       const wt = smoothUnionWT(minDist, dist, k);
-      finalColor = std.mix(finalColor, primColor, wt.y);
+      finalColor = d.vec3f(std.mix(finalColor, primColor, wt.y));
       minDist = wt.x;
     } else {
       if (dist < minDist) {
@@ -140,7 +140,7 @@ const fragShader = tgpu.fragmentFn({
       let shaded = std.mul(hitColor, light);
       // Gamma correction
       shaded = d.vec3f(std.sqrt(shaded.x), std.sqrt(shaded.y), std.sqrt(shaded.z));
-      finalColor = shaded;
+      finalColor = d.vec3f(shaded);
       break;
     }
 

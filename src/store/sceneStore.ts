@@ -67,7 +67,7 @@ const DEFAULT_COLORS: [number, number, number][] = [
 export const useSceneStore = create<SceneState>((set, get) => ({
   nodes: [],
   selectedId: null,
-  globalSmoothK: 0.3,
+  globalSmoothK: 0.1,
   maxSteps: 120,
   ambientStrength: 0.20,
   stepScale: 0.9,

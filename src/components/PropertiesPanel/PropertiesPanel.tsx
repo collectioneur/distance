@@ -244,7 +244,7 @@ function GlobalSettings() {
         label="Smooth Blend"
         value={globalSmoothK}
         min={0}
-        max={1.5}
+        max={0.4}
         step={0.01}
         onChange={setGlobalSmoothK}
       />

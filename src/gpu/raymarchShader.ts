@@ -117,42 +117,35 @@ const fragShader = tgpu.fragmentFn({
     const res = evalScene(p);
     const dist = res.w;
 
-    if (dist < 0.0005 * t + 0.0002) {
+    if (dist < 0.0008 * t) {
       // Hit — compute shading
       const hitPos = std.add(ro, std.mul(rd, t));
       const hitResult = evalScene(hitPos);
       const hitColor = d.vec3f(hitResult.x, hitResult.y, hitResult.z);
       const n = calcNormal(hitPos);
 
-      // Key light — upper-front-right
+      // Key light from upper-front-right
       const light1Dir = std.normalize(d.vec3f(0.6, 1.0, 0.4));
       const diff1 = std.max(std.dot(n, light1Dir), 0.0);
 
-      // Fill light — opposite side
-      const light2Dir = std.normalize(d.vec3f(-0.5, 0.2, -0.4));
+      // Soft fill light from opposite side
+      const light2Dir = std.normalize(d.vec3f(-0.5, 0.3, -0.4));
       const diff2 = std.max(std.dot(n, light2Dir), 0.0) * 0.35;
 
-      // Phong specular (tighter highlight, less plastic)
+      // Phong specular
       const refl = std.reflect(std.mul(rd, -1.0), n);
-      const spec = std.pow(std.max(std.dot(refl, light1Dir), 0.0), 64.0) * 0.35;
+      const spec = std.pow(std.max(std.dot(refl, light1Dir), 0.0), 48.0) * 0.35;
 
-      // Rim light: brightens silhouette edges
-      const nDotV = std.dot(n, std.mul(rd, -1.0));
-      const rim = std.pow(1.0 - std.max(nDotV, 0.0), 4.0) * 0.25;
-
-      // Hemisphere ambient: top faces get more sky light, bottom get less
-      const hemi = n.y * 0.5 + 0.5;
-      const ambientLight = s.ambientStrength * (0.5 + hemi * 0.5);
-
-      const totalLight = ambientLight + diff1 + diff2 + rim;
-      const specW = spec;
-
-      // Gamma correction (√) + additive white specular
-      finalColor = d.vec3f(
-        std.sqrt(hitColor.x * totalLight + specW),
-        std.sqrt(hitColor.y * totalLight + specW),
-        std.sqrt(hitColor.z * totalLight + specW),
+      // Combined light — use std.mul to avoid reference arithmetic issues
+      const light = s.ambientStrength + diff1 + diff2;
+      let lit = std.mul(hitColor, light);
+      // Gamma correction + additive white specular
+      lit = d.vec3f(
+        std.sqrt(lit.x) + spec,
+        std.sqrt(lit.y) + spec,
+        std.sqrt(lit.z) + spec,
       );
+      finalColor = d.vec3f(lit);
       break;
     }
 

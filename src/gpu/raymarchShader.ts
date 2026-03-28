@@ -71,9 +71,12 @@ const sceneDist = tgpu.fn([d.vec3f], d.f32)((p) => {
 const calcNormal = tgpu.fn([d.vec3f], d.vec3f)((p) => {
   'use gpu';
   const eps = 0.001;
-  const nx = sceneDist(d.vec3f(p.x + eps, p.y, p.z)) - sceneDist(d.vec3f(p.x - eps, p.y, p.z));
-  const ny = sceneDist(d.vec3f(p.x, p.y + eps, p.z)) - sceneDist(d.vec3f(p.x, p.y - eps, p.z));
-  const nz = sceneDist(d.vec3f(p.x, p.y, p.z + eps)) - sceneDist(d.vec3f(p.x, p.y, p.z - eps));
+  const ex = d.vec3f(eps, 0.0, 0.0);
+  const ey = d.vec3f(0.0, eps, 0.0);
+  const ez = d.vec3f(0.0, 0.0, eps);
+  const nx = sceneDist(std.add(p, ex)) - sceneDist(std.sub(p, ex));
+  const ny = sceneDist(std.add(p, ey)) - sceneDist(std.sub(p, ey));
+  const nz = sceneDist(std.add(p, ez)) - sceneDist(std.sub(p, ez));
   return std.normalize(d.vec3f(nx, ny, nz));
 });
 

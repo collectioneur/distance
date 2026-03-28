@@ -71,6 +71,9 @@ export default function Viewport() {
 
   const nodes = useSceneStore((s) => s.nodes);
   const globalSmoothK = useSceneStore((s) => s.globalSmoothK);
+  const maxSteps = useSceneStore((s) => s.maxSteps);
+  const ambientStrength = useSceneStore((s) => s.ambientStrength);
+  const cameraFov = useSceneStore((s) => s.cameraFov);
 
   // Push camera to GPU
   const pushCamera = useCallback((aspect: number) => {
@@ -81,6 +84,13 @@ export default function Viewport() {
     const fovTan = Math.tan((cam.fovDeg * Math.PI) / 180 / 2);
     r.updateCamera(pos, right, up, forward, fovTan, aspect);
   }, []);
+
+  // Sync FOV from store into camera ref and push
+  useEffect(() => {
+    cameraRef.current.fovDeg = cameraFov;
+    const canvas = canvasRef.current;
+    if (canvas) pushCamera(canvas.width / canvas.height);
+  }, [cameraFov, pushCamera]);
 
   // Initialize renderer
   useEffect(() => {
@@ -130,8 +140,8 @@ export default function Viewport() {
     const r = rendererRef.current;
     if (!r) return;
     const gpuPrims = useSceneStore.getState().getGPUPrimitives();
-    r.updateScene(gpuPrims, globalSmoothK);
-  }, [nodes, globalSmoothK]);
+    r.updateScene(gpuPrims, globalSmoothK, maxSteps, ambientStrength);
+  }, [nodes, globalSmoothK, maxSteps, ambientStrength]);
 
   // --- Mouse / touch orbit controls ---
   const onPointerDown = useCallback((e: React.PointerEvent) => {
@@ -162,17 +172,19 @@ export default function Viewport() {
     dragRef.current = null;
   }, []);
 
-  const onWheel = useCallback(
-    (e: React.WheelEvent) => {
+  // Non-passive wheel listener so preventDefault() works (blocks page zoom)
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const handler = (e: WheelEvent) => {
       e.preventDefault();
       const cam = cameraRef.current;
       cam.radius = Math.max(1.5, Math.min(30, cam.radius * (1 + e.deltaY * 0.001)));
-      const canvas = canvasRef.current;
-      const aspect = canvas ? canvas.width / canvas.height : 1;
-      pushCamera(aspect);
-    },
-    [pushCamera],
-  );
+      pushCamera(canvas.width / canvas.height);
+    };
+    canvas.addEventListener('wheel', handler, { passive: false });
+    return () => canvas.removeEventListener('wheel', handler);
+  }, [pushCamera]);
 
   return (
     <div className={styles.viewportWrapper}>
@@ -183,7 +195,6 @@ export default function Viewport() {
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        onWheel={onWheel}
       />
       {errorRef.current && (
         <div className={styles.errorOverlay}>

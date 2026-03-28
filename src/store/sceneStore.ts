@@ -30,6 +30,9 @@ interface SceneState {
   nodes: SceneNode[];
   selectedId: string | null;
   globalSmoothK: number;
+  maxSteps: number;
+  ambientStrength: number;
+  cameraFov: number;
 
   // Actions
   addPrimitive: (type: PrimitiveType) => void;
@@ -37,6 +40,9 @@ interface SceneState {
   selectNode: (id: string | null) => void;
   updateNode: (id: string, patch: Partial<Omit<PrimitiveNode, 'id' | 'type'>>) => void;
   setGlobalSmoothK: (k: number) => void;
+  setMaxSteps: (v: number) => void;
+  setAmbientStrength: (v: number) => void;
+  setCameraFov: (v: number) => void;
 
   // Derived — returns GPU-ready primitive list
   getGPUPrimitives: () => Array<{
@@ -60,6 +66,9 @@ export const useSceneStore = create<SceneState>((set, get) => ({
   nodes: [],
   selectedId: null,
   globalSmoothK: 0.3,
+  maxSteps: 120,
+  ambientStrength: 0.15,
+  cameraFov: 60,
 
   addPrimitive: (type) => {
     const nodes = get().nodes;
@@ -106,6 +115,9 @@ export const useSceneStore = create<SceneState>((set, get) => ({
   },
 
   setGlobalSmoothK: (k) => set({ globalSmoothK: k }),
+  setMaxSteps: (v) => set({ maxSteps: v }),
+  setAmbientStrength: (v) => set({ ambientStrength: v }),
+  setCameraFov: (v) => set({ cameraFov: v }),
 
   getGPUPrimitives: () => {
     return get().nodes.map((n) => ({

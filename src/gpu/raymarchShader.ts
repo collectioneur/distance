@@ -117,14 +117,14 @@ const fragShader = tgpu.fragmentFn({
     const res = evalScene(p);
     const dist = res.w;
 
-    if (dist < 0.0008 * t) {
+    if (dist < 0.0005 * t + 0.0002) {
       // Hit — compute shading
       const hitPos = std.add(ro, std.mul(rd, t));
       const hitResult = evalScene(hitPos);
       const hitColor = d.vec3f(hitResult.x, hitResult.y, hitResult.z);
       const n = calcNormal(hitPos);
 
-      // Key light from upper-front-right
+      // Key light — upper-front-right
       const light1Dir = std.normalize(d.vec3f(0.6, 1.0, 0.4));
       const diff1 = std.max(std.dot(n, light1Dir), 0.0);
 

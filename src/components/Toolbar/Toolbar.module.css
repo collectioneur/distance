@@ -1,0 +1,85 @@
+.toolbar {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 14px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  white-space: nowrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 4px;
+}
+
+.brandIcon {
+  font-size: 16px;
+  color: var(--accent);
+}
+
+.brandName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: var(--separator);
+  margin: 0 8px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  font-family: inherit;
+}
+
+.addBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border-color: var(--glass-border);
+}
+
+.addBtn:active {
+  background: var(--accent-hover);
+  color: var(--accent);
+}
+
+.btnIcon {
+  font-size: 13px;
+}
+
+.btnLabel {
+  letter-spacing: 0.02em;
+}

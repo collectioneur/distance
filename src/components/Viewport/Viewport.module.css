@@ -1,0 +1,44 @@
+.viewportWrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--bg-viewport);
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+.canvas:active {
+  cursor: grabbing;
+}
+
+.errorOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  background: rgba(8, 8, 10, 0.92);
+  font-size: 14px;
+  text-align: center;
+  padding: 32px;
+}
+
+.errorOverlay p {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.errorOverlay small {
+  color: var(--text-secondary);
+  font-size: 12px;
+  max-width: 480px;
+  word-break: break-word;
+}

@@ -1,0 +1,70 @@
+/* ============================================================
+   Design tokens — Dark Figma + Liquid Glass
+   ============================================================ */
+:root {
+  /* Viewport */
+  --bg-viewport: #070709;
+
+  /* Glass surfaces */
+  --glass-bg: rgba(10, 10, 14, 0.58);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(22px) saturate(1.4);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+
+  /* Typography */
+  --text-primary: #e4e4e8;
+  --text-secondary: #8a8a94;
+  --text-disabled: #484850;
+
+  /* Accent */
+  --accent: #7b68ee;
+  --accent-hover: rgba(123, 104, 238, 0.14);
+
+  /* Surfaces */
+  --surface-hover: rgba(255, 255, 255, 0.04);
+  --surface-selected: rgba(123, 104, 238, 0.11);
+
+  /* Input */
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.09);
+  --input-border-focus: rgba(123, 104, 238, 0.55);
+
+  /* Separator */
+  --separator: rgba(255, 255, 255, 0.06);
+}
+
+/* ============================================================
+   Reset / base
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+  background: var(--bg-viewport);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: inherit;
+}
+
+input[type='number']:focus {
+  outline: none;
+}

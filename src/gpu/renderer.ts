@@ -45,6 +45,8 @@ export class SDFRenderer {
   };
   private _primitives: PrimitiveUpdate[] = [];
   private _smoothK = 0.3;
+  private _maxSteps = 120;
+  private _ambientStrength = 0.15;
 
   async init(canvas: HTMLCanvasElement): Promise<void> {
     if (!navigator.gpu) throw new Error('WebGPU not supported in this browser');
@@ -82,9 +84,11 @@ export class SDFRenderer {
     this._flush();
   }
 
-  updateScene(primitives: PrimitiveUpdate[], globalSmoothK: number): void {
+  updateScene(primitives: PrimitiveUpdate[], globalSmoothK: number, maxSteps: number, ambientStrength: number): void {
     this._primitives = primitives;
     this._smoothK = globalSmoothK;
+    this._maxSteps = maxSteps;
+    this._ambientStrength = ambientStrength;
     this._flush();
   }
 
@@ -115,8 +119,8 @@ export class SDFRenderer {
       }),
       primCount: this._primitives.length,
       globalSmoothK: this._smoothK,
-      _pad0: 0,
-      _pad1: 0,
+      maxSteps: this._maxSteps,
+      ambientStrength: this._ambientStrength,
       primitives: primArray,
     });
   }

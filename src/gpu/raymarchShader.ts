@@ -108,9 +108,11 @@ const fragShader = tgpu.fragmentFn({
   const bgB = d.vec3f(0.06, 0.06, 0.09);
   let finalColor = std.mix(bgA, bgB, input.uv.y);
 
-  // Raymarching loop
+  // Raymarching loop — iterations capped by s.maxSteps uniform
   let t = 0.01;
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 256; i++) {
+    if (i >= s.maxSteps) break;
+
     const p = std.add(ro, std.mul(rd, t));
     const res = evalScene(p);
     const dist = res.w;
@@ -134,13 +136,18 @@ const fragShader = tgpu.fragmentFn({
       const refl = std.reflect(std.mul(rd, -1.0), n);
       const spec = std.pow(std.max(std.dot(refl, light1Dir), 0.0), 32.0) * 0.4;
 
-      const ambient = 0.12;
-      const light = ambient + diff1 * 0.8 + diff2 + spec;
+      // Hemisphere ambient: blends between ground (warm) and sky (cool) based on normal Y
+      const hemi = n.y * 0.5 + 0.5;
+      const ambientLight = s.ambientStrength * (0.5 + hemi * 0.5);
+      const totalLight = ambientLight + diff1 * 0.85 + diff2;
+      const specW = spec * 0.6;
 
-      let shaded = std.mul(hitColor, light);
-      // Gamma correction
-      shaded = d.vec3f(std.sqrt(shaded.x), std.sqrt(shaded.y), std.sqrt(shaded.z));
-      finalColor = d.vec3f(shaded);
+      // Gamma correction + additive white specular
+      finalColor = d.vec3f(
+        std.sqrt(hitColor.x * totalLight + specW),
+        std.sqrt(hitColor.y * totalLight + specW),
+        std.sqrt(hitColor.z * totalLight + specW),
+      );
       break;
     }
 

@@ -52,7 +52,7 @@ const evalScene = tgpu.fn([d.vec3f], d.vec4f)((p) => {
       minDist = wt.x;
     } else {
       if (dist < minDist) {
-        finalColor = primColor;
+        finalColor = d.vec3f(primColor);
         minDist = dist;
       }
     }

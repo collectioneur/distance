@@ -60,8 +60,8 @@ export default function RenderSettingsPanel() {
           <Slider
             label="Step Scale"
             value={stepScale}
-            min={0.1}
-            max={1.5}
+            min={0.05}
+            max={1.0}
             step={0.05}
             precision={2}
             onChange={setStepScale}

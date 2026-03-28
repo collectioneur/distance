@@ -1,6 +1,6 @@
-import { useRef, useCallback } from 'react';
-import { useSceneStore, type PrimitiveNode } from '../../store/sceneStore';
-import styles from './PropertiesPanel.module.css';
+import { useRef, useCallback } from "react";
+import { useSceneStore, type PrimitiveNode } from "../../store/sceneStore";
+import styles from "./PropertiesPanel.module.css";
 
 // ---- Scrubable number input ----
 interface Vec3FieldProps {
@@ -11,8 +11,14 @@ interface Vec3FieldProps {
   precision?: number;
 }
 
-function Vec3Field({ label, value, onChange, step = 0.1, precision = 2 }: Vec3FieldProps) {
-  const axes = ['X', 'Y', 'Z'] as const;
+function Vec3Field({
+  label,
+  value,
+  onChange,
+  step = 0.1,
+  precision = 2,
+}: Vec3FieldProps) {
+  const axes = ["X", "Y", "Z"] as const;
 
   return (
     <div className={styles.fieldGroup}>
@@ -45,7 +51,13 @@ interface ScrubInputProps {
   onChange: (v: number) => void;
 }
 
-function ScrubInput({ axis, value, step, precision, onChange }: ScrubInputProps) {
+function ScrubInput({
+  axis,
+  value,
+  step,
+  precision,
+  onChange,
+}: ScrubInputProps) {
   const dragRef = useRef<{ startX: number; startVal: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const editingRef = useRef(false);
@@ -65,11 +77,11 @@ function ScrubInput({ axis, value, step, precision, onChange }: ScrubInputProps)
       };
       const onUp = () => {
         dragRef.current = null;
-        window.removeEventListener('mousemove', onMove);
-        window.removeEventListener('mouseup', onUp);
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
       };
-      window.addEventListener('mousemove', onMove);
-      window.addEventListener('mouseup', onUp);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
     },
     [value, step, precision, onChange],
   );
@@ -83,15 +95,12 @@ function ScrubInput({ axis, value, step, precision, onChange }: ScrubInputProps)
     editingRef.current = false;
   }, []);
 
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter' || e.key === 'Escape') {
-        editingRef.current = false;
-        (e.target as HTMLInputElement).blur();
-      }
-    },
-    [],
-  );
+  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === "Escape") {
+      editingRef.current = false;
+      (e.target as HTMLInputElement).blur();
+    }
+  }, []);
 
   return (
     <div className={styles.axisField}>
@@ -115,14 +124,14 @@ function ScrubInput({ axis, value, step, precision, onChange }: ScrubInputProps)
 // ---- Color picker ----
 function toHex(rgb: [number, number, number]): string {
   return (
-    '#' +
+    "#" +
     rgb
       .map((c) =>
         Math.round(c * 255)
           .toString(16)
-          .padStart(2, '0'),
+          .padStart(2, "0"),
       )
-      .join('')
+      .join("")
   );
 }
 
@@ -143,7 +152,14 @@ interface SliderProps {
   onChange: (v: number) => void;
 }
 
-function Slider({ label, value, min = 0, max = 1, step = 0.01, onChange }: SliderProps) {
+function Slider({
+  label,
+  value,
+  min = 0,
+  max = 1,
+  step = 0.01,
+  onChange,
+}: SliderProps) {
   return (
     <div className={styles.fieldGroup}>
       <div className={styles.sliderHeader}>
@@ -223,7 +239,9 @@ function NodeProperties({ node }: { node: PrimitiveNode }) {
               type="color"
               className={styles.colorInput}
               value={toHex(node.color)}
-              onChange={(e) => updateNode(node.id, { color: fromHex(e.target.value) })}
+              onChange={(e) =>
+                updateNode(node.id, { color: fromHex(e.target.value) })
+              }
             />
             <span className={styles.colorHex}>{toHex(node.color)}</span>
           </div>
@@ -244,7 +262,7 @@ function GlobalSettings() {
         label="Smooth Blend"
         value={globalSmoothK}
         min={0}
-        max={0.4}
+        max={4.0}
         step={0.01}
         onChange={setGlobalSmoothK}
       />
@@ -259,7 +277,9 @@ function GlobalSettings() {
 export default function PropertiesPanel() {
   const selectedId = useSceneStore((s) => s.selectedId);
   const nodes = useSceneStore((s) => s.nodes);
-  const selectedNode = nodes.find((n) => n.id === selectedId) as PrimitiveNode | undefined;
+  const selectedNode = nodes.find((n) => n.id === selectedId) as
+    | PrimitiveNode
+    | undefined;
 
   return (
     <div className={styles.panel}>

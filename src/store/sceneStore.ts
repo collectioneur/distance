@@ -32,6 +32,7 @@ interface SceneState {
   globalSmoothK: number;
   maxSteps: number;
   ambientStrength: number;
+  stepScale: number;
   cameraFov: number;
 
   // Actions
@@ -42,6 +43,7 @@ interface SceneState {
   setGlobalSmoothK: (k: number) => void;
   setMaxSteps: (v: number) => void;
   setAmbientStrength: (v: number) => void;
+  setStepScale: (v: number) => void;
   setCameraFov: (v: number) => void;
 
   // Derived — returns GPU-ready primitive list
@@ -67,7 +69,8 @@ export const useSceneStore = create<SceneState>((set, get) => ({
   selectedId: null,
   globalSmoothK: 0.3,
   maxSteps: 120,
-  ambientStrength: 0.15,
+  ambientStrength: 0.20,
+  stepScale: 0.9,
   cameraFov: 60,
 
   addPrimitive: (type) => {
@@ -117,6 +120,7 @@ export const useSceneStore = create<SceneState>((set, get) => ({
   setGlobalSmoothK: (k) => set({ globalSmoothK: k }),
   setMaxSteps: (v) => set({ maxSteps: v }),
   setAmbientStrength: (v) => set({ ambientStrength: v }),
+  setStepScale: (v) => set({ stepScale: v }),
   setCameraFov: (v) => set({ cameraFov: v }),
 
   getGPUPrimitives: () => {

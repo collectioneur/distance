@@ -48,7 +48,7 @@ const evalScene = tgpu.fn([d.vec3f], d.vec4f)((p) => {
     // Smooth union with color blending
     if (k > 0.001) {
       const wt = smoothUnionWT(minDist, dist, k);
-      finalColor = d.vec3f(std.mix(finalColor, primColor, wt.y));
+      finalColor = d.vec3f(std.mix(primColor, finalColor, wt.y));
       minDist = wt.x;
     } else {
       if (dist < minDist) {
@@ -117,32 +117,37 @@ const fragShader = tgpu.fragmentFn({
     const res = evalScene(p);
     const dist = res.w;
 
-    if (dist < 0.0008 * t) {
+    if (dist < 0.0005 * t + 0.0002) {
       // Hit — compute shading
       const hitPos = std.add(ro, std.mul(rd, t));
       const hitResult = evalScene(hitPos);
       const hitColor = d.vec3f(hitResult.x, hitResult.y, hitResult.z);
       const n = calcNormal(hitPos);
 
-      // Key light from upper-front-right
+      // Key light — upper-front-right
       const light1Dir = std.normalize(d.vec3f(0.6, 1.0, 0.4));
       const diff1 = std.max(std.dot(n, light1Dir), 0.0);
 
-      // Soft fill light from opposite side
-      const light2Dir = std.normalize(d.vec3f(-0.4, 0.3, -0.5));
-      const diff2 = std.max(std.dot(n, light2Dir), 0.0) * 0.3;
+      // Fill light — opposite side
+      const light2Dir = std.normalize(d.vec3f(-0.5, 0.2, -0.4));
+      const diff2 = std.max(std.dot(n, light2Dir), 0.0) * 0.35;
 
-      // Specular highlight
+      // Phong specular (tighter highlight, less plastic)
       const refl = std.reflect(std.mul(rd, -1.0), n);
-      const spec = std.pow(std.max(std.dot(refl, light1Dir), 0.0), 32.0) * 0.4;
+      const spec = std.pow(std.max(std.dot(refl, light1Dir), 0.0), 64.0) * 0.35;
 
-      // Hemisphere ambient: blends between ground (warm) and sky (cool) based on normal Y
+      // Rim light: brightens silhouette edges
+      const nDotV = std.dot(n, std.mul(rd, -1.0));
+      const rim = std.pow(1.0 - std.max(nDotV, 0.0), 4.0) * 0.25;
+
+      // Hemisphere ambient: top faces get more sky light, bottom get less
       const hemi = n.y * 0.5 + 0.5;
       const ambientLight = s.ambientStrength * (0.5 + hemi * 0.5);
-      const totalLight = ambientLight + diff1 * 0.85 + diff2;
-      const specW = spec * 0.6;
 
-      // Gamma correction + additive white specular
+      const totalLight = ambientLight + diff1 + diff2 + rim;
+      const specW = spec;
+
+      // Gamma correction (√) + additive white specular
       finalColor = d.vec3f(
         std.sqrt(hitColor.x * totalLight + specW),
         std.sqrt(hitColor.y * totalLight + specW),
@@ -152,7 +157,7 @@ const fragShader = tgpu.fragmentFn({
     }
 
     if (t > 80.0) break;
-    t = t + dist;
+    t = t + dist * s.stepScale;
   }
 
   return d.vec4f(finalColor.x, finalColor.y, finalColor.z, 1.0);

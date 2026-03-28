@@ -36,6 +36,8 @@ export default function RenderSettingsPanel() {
   const setMaxSteps = useSceneStore((s) => s.setMaxSteps);
   const ambientStrength = useSceneStore((s) => s.ambientStrength);
   const setAmbientStrength = useSceneStore((s) => s.setAmbientStrength);
+  const stepScale = useSceneStore((s) => s.stepScale);
+  const setStepScale = useSceneStore((s) => s.setStepScale);
   const cameraFov = useSceneStore((s) => s.cameraFov);
   const setCameraFov = useSceneStore((s) => s.setCameraFov);
 
@@ -54,6 +56,15 @@ export default function RenderSettingsPanel() {
             step={4}
             precision={0}
             onChange={setMaxSteps}
+          />
+          <Slider
+            label="Step Scale"
+            value={stepScale}
+            min={0.1}
+            max={1.5}
+            step={0.05}
+            precision={2}
+            onChange={setStepScale}
           />
           <Slider
             label="Ambient"

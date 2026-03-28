@@ -28,7 +28,7 @@ export const SceneUniforms = d.struct({
   camera: CameraData,
   primCount: d.u32,
   globalSmoothK: d.f32,
-  maxSteps: d.i32,         // raymarch max iterations (was _pad0)
+  maxSteps: d.u32,         // raymarch max iterations (was _pad0)
   ambientStrength: d.f32,  // ambient light intensity (was _pad1)
   primitives: d.arrayOf(PrimData, MAX_PRIMS),
 });

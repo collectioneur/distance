@@ -48,7 +48,7 @@ const evalScene = tgpu.fn([d.vec3f], d.vec4f)((p) => {
     // Smooth union with color blending
     if (k > 0.001) {
       const wt = smoothUnionWT(minDist, dist, k);
-      finalColor = d.vec3f(std.mix(finalColor, primColor, wt.y));
+      finalColor = d.vec3f(std.mix(primColor, finalColor, wt.y));
       minDist = wt.x;
     } else {
       if (dist < minDist) {

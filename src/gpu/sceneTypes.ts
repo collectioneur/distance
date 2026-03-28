@@ -24,12 +24,17 @@ export const PrimData = d.struct({
 });
 
 // Full scene uniform buffer
+// Layout: CameraData (64 bytes) + 8×f32 (32 bytes) = 96 bytes before primitives array (16-byte aligned)
 export const SceneUniforms = d.struct({
   camera: CameraData,
   primCount: d.u32,
   globalSmoothK: d.f32,
-  maxSteps: d.u32,         // raymarch max iterations (was _pad0)
-  ambientStrength: d.f32,  // ambient light intensity (was _pad1)
+  maxSteps: d.u32,         // raymarch max iterations
+  ambientStrength: d.f32,  // ambient light intensity
+  stepScale: d.f32,        // raymarch step multiplier (< 1 = shorter/more accurate)
+  _pad2: d.f32,
+  _pad3: d.f32,
+  _pad4: d.f32,
   primitives: d.arrayOf(PrimData, MAX_PRIMS),
 });
 

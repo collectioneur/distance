@@ -73,6 +73,7 @@ export default function Viewport() {
   const globalSmoothK = useSceneStore((s) => s.globalSmoothK);
   const maxSteps = useSceneStore((s) => s.maxSteps);
   const ambientStrength = useSceneStore((s) => s.ambientStrength);
+  const stepScale = useSceneStore((s) => s.stepScale);
   const cameraFov = useSceneStore((s) => s.cameraFov);
 
   // Push camera to GPU
@@ -140,8 +141,8 @@ export default function Viewport() {
     const r = rendererRef.current;
     if (!r) return;
     const gpuPrims = useSceneStore.getState().getGPUPrimitives();
-    r.updateScene(gpuPrims, globalSmoothK, maxSteps, ambientStrength);
-  }, [nodes, globalSmoothK, maxSteps, ambientStrength]);
+    r.updateScene(gpuPrims, globalSmoothK, maxSteps, ambientStrength, stepScale);
+  }, [nodes, globalSmoothK, maxSteps, ambientStrength, stepScale]);
 
   // --- Mouse / touch orbit controls ---
   const onPointerDown = useCallback((e: React.PointerEvent) => {
